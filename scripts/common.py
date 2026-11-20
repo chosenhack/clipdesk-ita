@@ -6,11 +6,36 @@ ROOT = Path(os.environ.get("CLIP_DESK_HOME", Path.cwd()))
 JOBS = ROOT / "jobs"
 
 
+# Homebrew's plain "ffmpeg" formula is built without libass, so it cannot burn captions; "ffmpeg-full" can,
+# but it is keg-only (not on PATH). Prefer it when present. FFMPEG_DIR overrides everything.
+_FFMPEG_DIRS = [os.environ.get("FFMPEG_DIR", ""), "/opt/homebrew/opt/ffmpeg-full/bin", "/usr/local/opt/ffmpeg-full/bin"]
+_found = {}
+
+
 def tool(name):
-    p = shutil.which(name)
+    if name in _found:
+        return _found[name]
+    p = None
+    if name in ("ffmpeg", "ffprobe"):
+        for d in filter(None, _FFMPEG_DIRS):
+            c = Path(d) / (name + (".exe" if sys.platform == "win32" else ""))
+            if c.is_file() and os.access(c, os.X_OK):
+                p = str(c)
+                break
+    p = p or shutil.which(name)
     if not p:
-        sys.exit(f"{name} not found. Run the setup skill first (it installs ffmpeg and yt-dlp).")
+        sys.exit(f"{name} non trovato. Lancia prima la skill setup (installa ffmpeg e yt-dlp).")
+    _found[name] = p
     return p
+
+
+def need_subtitles():
+    """Exit with a clear message if this ffmpeg cannot burn ASS captions (no libass)."""
+    r = run([tool("ffmpeg"), "-hide_banner", "-filters"], capture=True, check=False)
+    if not re.search(r"^\s*\S*\s+subtitles\s", r.stdout or "", re.M):
+        sys.exit(f"Il tuo ffmpeg ({tool('ffmpeg')}) non sa scrivere i sottotitoli: manca libass.\n"
+                 "Mac: brew install ffmpeg-full (gli script lo trovano da soli). "
+                 "Windows: winget install --id Gyan.FFmpeg -e. Linux: sudo apt install -y ffmpeg.")
 
 
 def run(cmd, check=True, capture=False):
@@ -52,6 +77,18 @@ def ffprobe(path):
     r = run([tool("ffprobe"), "-v", "error", "-show_entries", "format=duration:stream=codec_type,width,height,r_frame_rate",
              "-of", "json", str(path)], capture=True)
     return json.loads(r.stdout)
+
+
+def join_elisions(words):
+    """faster-whisper splits Italian elisions into two words ("dell" + "'auto"): glue them back ("dell'auto").
+    Safe to run twice; English contractions ("it" + "'s") come out right too."""
+    out = []
+    for w in words:
+        if out and str(w.get("w", "")).startswith("'") and out[-1]["w"][-1:].isalpha():
+            out[-1] = dict(out[-1], w=out[-1]["w"] + w["w"], e=w["e"])
+        else:
+            out.append(dict(w))
+    return out
 
 
 def save_json(path, obj):

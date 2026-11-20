@@ -1,13 +1,14 @@
 {
-  "name": "gtavi-claudecode",
-  "displayName": "GTA 6 Clip Desk",
-  "version": "0.1.0",
-  "description": "Run a faceless GTA 6 clipping page with the fewest human actions. You approve every post.",
+  "name": "clipdesk-ita",
+  "displayName": "Clip Desk ITA",
+  "version": "0.2.0",
+  "description": "Le live di GTA 6 diventano clip verticali in italiano, con il minimo di lavoro a mano. Approvi tu ogni post.",
   "author": {
-    "name": "Bodila51",
-    "url": "https://github.com/Bodila51"
+    "name": "chosenhack, da gtavi-claudecode di Bodila51",
+    "url": "https://github.com/chosenhack"
   },
-  "repository": "https://github.com/Bodila51/gtavi-claudecode",
-  "keywords": ["gta6", "clipping", "video", "shorts", "whop"],
+  "repository": "https://github.com/chosenhack/clipdesk-ita",
+  "license": "MIT",
+  "keywords": ["gta6", "clipping", "video", "shorts", "reels", "italiano"],
   "skills": ["./skills/"]
 }

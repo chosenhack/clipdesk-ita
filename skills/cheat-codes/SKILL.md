@@ -1,28 +1,28 @@
 ---
 name: cheat-codes
-description: GTA 6 cheat codes and cheat-guide posts. Use when the user asks for GTA 6 cheats, a cheat carousel, a "how to enter cheats" post, or wants to refresh cheat statuses after launch.
+description: Codici cheat di GTA 6 e post guida. Usala quando l'utente chiede i cheat di GTA 6, un carosello dei cheat, un post «come inserire i cheat», o vuole aggiornare lo stato dei cheat dopo il lancio.
 ---
 
-# Cheat codes
+# Codici cheat
 
-Answer only from `references/cheats.md`. Never add a code from memory.
+Rispondi solo partendo da `references/cheats.md`. Non aggiungere mai un codice a memoria.
 
-## Make a 4-slide cheat carousel
+## Crea un carosello di cheat da 4 slide
 
-1. Cover: "GTA 6 cheat codes" + "PS5 and Xbox Series X|S" + one hook line (for example "The $250,000 cheat is real").
-2. How to enter: the 4 steps from the reference, plus the warning "Save first: cheats block saving, trophies and achievements for that session".
-3. Player and combat: money, focus, armor, ammo codes with their unlock tasks, D-pad arrows as big buttons.
-4. Vehicles and filters: spawns and screen filters with unlock tasks.
+1. Copertina: «Codici cheat GTA 6» + «PS5 e Xbox Series X|S» + una riga di gancio (per esempio «Il cheat da 250.000 $ è reale»).
+2. Come inserirli: i 4 passi del riferimento, più l'avviso «Salva prima: i cheat bloccano il salvataggio, i trofei e gli obiettivi di quella sessione».
+3. Giocatore e combattimento: codici di denaro, focus, armatura, munizioni con le relative attività di sblocco, frecce della croce direzionale come tasti grandi.
+4. Veicoli e filtri: evocazione dei veicoli e filtri dello schermo con le relative attività di sblocco.
 
-Style: dark background, one accent color, arrows as rounded key caps, the page handle on every slide. Caption: HOW TO template from the playbook, credit "codes via GameSpot" (or the source you used).
+Stile: sfondo scuro, un solo colore d'accento, frecce come tasti arrotondati, il nome utente della pagina su ogni slide. Didascalia: modello HOW TO del playbook, credito «codici via GameSpot» (o la fonte che hai usato).
 
-## Rules
+## Regole
 
-- Post only codes with status `reported` or `verified`. Never post `unconfirmed` ones.
-- Before posting any cheat code, check that it appears in at least one guide listed in the reference. If a code is not listed, write "code not found yet" and never invent the arrows. Never repost codes from the "Fake codes going around" list.
-- Until the codes are verified in the game, say "reported" in the caption, not "confirmed".
-- No mod menus, money glitches, GTA Online cheats or anything that breaks the rules of online play.
+- Pubblica solo codici con stato `reported` o `verified`. Non pubblicare mai quelli `unconfirmed`.
+- Prima di pubblicare un cheat, controlla che compaia in almeno una guida elencata nel riferimento. Se un codice non è elencato, scrivi «codice non ancora trovato» e non inventare mai le frecce. Non ripubblicare mai i codici della lista «Codici falsi in circolazione».
+- Finché i codici non sono verificati nel gioco, scrivi «segnalato» nella didascalia, non «confermato».
+- Niente menu mod, glitch dei soldi, cheat di GTA Online o nulla che violi le regole del gioco online.
 
-## After launch
+## Dopo il lancio
 
-When a code is tested in the game, set its status to `verified` with who tested it and the date. If it fails, mark it `wrong` and post a correction.
+Quando un codice viene testato nel gioco, imposta il suo stato su `verified` indicando chi l'ha provato e la data. Se non funziona, segnalalo come `wrong` e pubblica una correzione.

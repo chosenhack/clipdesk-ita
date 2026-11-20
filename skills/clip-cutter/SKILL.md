@@ -1,25 +1,27 @@
 ---
 name: clip-cutter
-description: Cut a picked moment into a finished 1080x1920 vertical clip with word-by-word captions, and a hook box. Use after moment-finder, or when the user says "cut it", "make the clip", "make it vertical".
+description: Taglia un momento scelto in una clip verticale 1080x1920 finita, con sottotitoli parola per parola e un box con il gancio. Usala dopo moment-finder, o quando l'utente dice «tagliala», «fai la clip», «mettila in verticale».
 ---
 
-# Clip cutter
+# Taglio clip
 
-Run:
+Esegui:
 
 `python "${CLAUDE_PLUGIN_ROOT}/scripts/cut.py" jobs/<id> --pick <n> --layout fill|blur|facecam --hook "TEXT"`
 
-- `fill`: crop the game video to fill the frame. Default for gameplay.
-- `blur`: full video centered over a blurred copy. Use when cropping would cut off the action.
-- `facecam`: gameplay with the streamer's camera shown. Use for reactions.
+- `fill`: ritaglia il video di gioco per riempire il fotogramma. Predefinito per il gameplay.
+- `blur`: video intero al centro, sopra una copia sfocata. Usalo quando il ritaglio taglierebbe via l'azione.
+- `facecam`: gioco con la webcam dello streamer visibile. Usalo per le reazioni.
 
-Before running:
+I sottotitoli mascherano anche le parolacce italiane, e mascherano sempre gli insulti e le bestemmie italiane (per esempio «porco dio» diventa «p**** d**»). `--allow-profanity` sblocca solo le parolacce comuni.
 
-1. Get 3 hook options from the `hook-writer` skill and use the best one.
+Prima di eseguire:
 
-After running:
+1. Chiedi 3 opzioni di gancio alla skill `hook-writer` e usa la migliore.
 
-1. Output is an mp4 in `media/edits`. Check it is 1080x1920, the hook shows in the first 2 seconds, captions are readable. No credit text is burned into the video; the poster credits the creator in the post.
-2. Run `rule-check` on it. Fix and re-cut until it passes.
-3. Trim 7 to 30 seconds for most clips. End on the payoff.
-4. Show the human the file, and the caption text, and ask for "yes". Do not upload anything.
+Dopo l'esecuzione:
+
+1. L'output è un mp4 in `media/edits`. Controlla che sia 1080x1920, che il gancio compaia nei primi 2 secondi e che i sottotitoli siano leggibili. Nel video non va nessun testo di credito; chi pubblica accredita il creatore nel post.
+2. Fai passare la clip da `rule-check`. Correggi e ritaglia di nuovo finché non passa.
+3. Per la maggior parte delle clip, taglia tra 7 e 30 secondi. Chiudi sul punto più forte.
+4. Mostra all'utente il file e il testo della didascalia e chiedi un «sì». Non caricare niente.

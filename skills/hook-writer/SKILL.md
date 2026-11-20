@@ -1,44 +1,44 @@
 ---
 name: hook-writer
-description: Write on-screen hooks for GTA 6 clips. Use whenever a clip needs a hook, a title or a caption opener, or when the user asks for hook options.
+description: Scrivi i ganci sullo schermo per le clip di GTA 6. Usala ogni volta che una clip ha bisogno di un gancio, di un titolo o di un'apertura per la didascalia, o quando l'utente dice «scrivi i ganci» o «trova un titolo».
 ---
 
-# Hook writer
+# Scrittura ganci
 
-Write 3 options per clip. Sentence case. Short: 3 to 9 words fit the hook box.
+Scrivi 3 opzioni per clip, in stile frase (solo la prima lettera maiuscola). Brevi: da 3 a 9 parole entrano nel box del gancio. I ganci sono in italiano. Un gancio crea curiosità, non descrive: sbagliato «Clip divertente di GTA 6», giusto «Ha trovato l'auto che nessuno aveva visto».
 
-## What works
+## Cosa funziona
 
-- Number promise: "3 things you missed in this trailer"
-- Shock fact: "This car is hidden in plain sight"
-- Situation: "When the cops chase the wrong player"
-- Negation: "You can't do this in GTA 5"
-- Question: "Would you survive this chase?"
-- Naming the streamer or creator when they are known: "Even [name] didn't see this coming"
+- Promessa con un numero: "3 cose che ti sei perso in questo trailer"
+- Fatto che sorprende: "Questa auto è nascosta in bella vista"
+- Situazione: "Quando la polizia insegue il giocatore sbagliato"
+- Negazione: "Questo non si può fare in GTA 5"
+- Domanda: "Riusciresti a sopravvivere a questo inseguimento?"
+- Nome dello streamer o del creator, quando è noto: "Anche [nome] non se l'aspettava"
 
-## Reaction titles (twitch-reaction layout)
+## Titoli di reazione (layout twitch-reaction)
 
-For a streamer's reaction clip the title sits on the seam between face and game for the whole clip. Formula: streamer name + reaction verb + what they reacted to, with CAPS on 2 or 3 key words.
+Per una clip di reazione di uno streamer, il titolo sta sulla linea di giunzione tra volto e gioco per tutta la clip. Formula: nome dello streamer + verbo di reazione + cosa ha reagito, con MAIUSCOLO su 2 o 3 parole chiave.
 
-- "Speed REALIZED why GTA 6 took ROCKSTAR 13 YEARS"
-- "Kai LOST IT when the cops showed up in GTA 6"
-- "Fighting Cops in GTA 6" (outlined style: short, 3 to 6 words)
+- "Speed HA CAPITO perché GTA 6 ci ha messo 13 ANNI"
+- "Kai HA PERSO LA TESTA quando sono arrivati i poliziotti in GTA 6"
+- "Scontri con la polizia in GTA 6" (stile contorno: breve, da 3 a 6 parole)
 
-Describe what happens on screen. Never put words in the streamer's mouth: no quotes they did not say, no made-up opinions. Emojis are optional, at most 2.
+Descrivi quello che succede sullo schermo. Mai mettere parole in bocca allo streamer: niente citazioni che non ha detto, niente opinioni inventate. Le emoji sono facoltative, al massimo 2.
 
-## What does not work
+## Cosa non funziona
 
-- Bare labels: "GTA 6 clip", "Funny moment"
-- "Wait for it", "You won't believe this", "Watch till the end"
-- Fake urgency or CAPS everywhere
+- Etichette generiche: "Clip di GTA 6", "Momento divertente"
+- "Aspetta e vedrai", "Non ci crederai", "Guarda fino alla fine"
+- Urgenza finta o MAIUSCOLO ovunque
 
-## Rules
+## Regole
 
-1. The clip must deliver the hook. If the hook says 3 things, show 3. No clickbait.
-2. No spoilers for story moments in launch week. Label such clips SPOILER in the caption, not in the hook.
-3. Never imply the page is Rockstar. Never write "official" for fan content.
-4. Use "GTA 6". One emoji at most.
-5. Do not reuse the same hook within a week. Check `log.md`.
-6. Facts in the hook must be true and verified. Numbers must match the clip.
+1. La clip deve mantenere la promessa del gancio. Se il gancio dice 3 cose, mostrane 3. Niente clickbait.
+2. Niente spoiler sui momenti di trama nella settimana di lancio. Segna queste clip con SPOILER nella didascalia, non nel gancio.
+3. Non far pensare che la pagina sia di Rockstar. Non scrivere «ufficiale» per i contenuti dei fan.
+4. Usa «GTA 6». Al massimo una emoji.
+5. Non riusare lo stesso gancio nell'arco di una settimana. Controlla `log.md`.
+6. I fatti nel gancio devono essere veri e verificati. I numeri devono corrispondere alla clip.
 
-Return the 3 options and mark your pick.
+Restituisci le 3 opzioni e segna quella che consigli.

@@ -16,9 +16,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from common import job_dir, run, save_json, tool, ytdlp_base
 
-HYPE = re.compile(r"(?i:LMAO|KEKW|LOL|CLIP|HOLY|NO WAY)|\bW+\b|[💀😂🔥]")
-NOISE = re.compile(r"(?i)giveaway|\braid(ing|ed)?\b|\bbrb\b|be right back|ad break|sponsor|subscribe|discord\.gg|https?://|promo code|follow me")
-STOP = set("the a an and or to of is it in i you that this on for with was are be so but not my me we he she they what just like at as if do get".split())
+HYPE = re.compile(r"(?i:LMAO|KEKW|LOL|CLIP|HOLY|NO WAY|AH(?:AH)+|\bXD+\b|ASSURD|PAZZESC|MADONNA|DAJE|GODO|NOO+\b)|\bW+\b|[💀😂🔥]")
+# ads, raids, links and bot commands (!prime, !sub): not reactions
+NOISE = re.compile(r"(?i)giveaway|\braid(ing|ed)?\b|\bbrb\b|be right back|ad break|sponsor|subscribe|discord\.gg|https?://|promo code|follow me"
+                   r"|iscriv|seguimi|codice sconto|pubblicit|torno subito|sorteggi|^\s*!\w+")
+STOP = set("the a an and or to of is it in i you that this on for with was are be so but not my me we he she they what just like at as if do get"
+           " il lo la gli le un una di da con su per ma che chi non si mi ti ci è ho hai ha del della dei al alla nel come cosa".split())
 WORD = re.compile(r"[\w']{2,}|[💀😂🔥]")
 
 

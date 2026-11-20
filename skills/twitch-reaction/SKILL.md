@@ -1,35 +1,35 @@
 ---
 name: twitch-reaction
-description: Watch the biggest GTA 6 Twitch streamer and make reaction clips: face on top, game below, big title. Use when the user wants streamer reaction clips, "face on top" clips, Twitch clips, or asks who is streaming GTA 6 right now.
+description: Guarda lo streamer Twitch di GTA 6 più seguito e fai clip di reazione, con volto in alto, gioco sotto e titolo grande. Usala quando l'utente vuole clip di reazione di streamer, clip «faccia in alto», clip Twitch, o chiede chi sta trasmettendo GTA 6 adesso.
 ---
 
-# Twitch reaction clips
+# Clip di reazione Twitch
 
-Face on top, game below, a big title on the seam. The format of most viral GTA 6 streamer clips.
+Volto in alto, gioco sotto, un titolo grande sulla linea di giunzione. È il formato della maggior parte delle clip virali di streamer su GTA 6.
 
-## 1. Find the streamer (no Twitch account or key needed)
+## 1. Trova lo streamer (non serve un account o una chiave Twitch)
 
-`python "${CLAUDE_PLUGIN_ROOT}/scripts/streams.py" --query "gta 6"` lists the top live Grand Theft Auto VI streams on Twitch and YouTube, ranked by viewers. Pick a streamer who runs a clipping campaign (check `campaigns.md`), or one whose clips you have permission to post.
+`python "${CLAUDE_PLUGIN_ROOT}/scripts/streams.py" --query "gta 6"` elenca le prime live di Grand Theft Auto VI su Twitch e YouTube, ordinate per spettatori. Scegli uno streamer che ha una campagna di clip (controlla `campaigns.md`), oppure uno le cui clip puoi pubblicare con il permesso.
 
-## 2. Get the moment
+## 2. Ottieni il momento
 
-- Live: `python "${CLAUDE_PLUGIN_ROOT}/scripts/live.py" https://twitch.tv/<login> --minutes 60` records the stream, reads Twitch chat anonymously and cuts a clip every time chat explodes.
-- After the fact: `python "${CLAUDE_PLUGIN_ROOT}/scripts/moments.py" <twitch VOD or clip URL> --top 8` scores the VOD and writes `candidates.md`.
+- In diretta: `python "${CLAUDE_PLUGIN_ROOT}/scripts/live.py" https://twitch.tv/<login> --minutes 60` registra la live, legge la chat di Twitch in forma anonima e taglia una clip ogni volta che la chat esplode.
+- A posteriori: `python "${CLAUDE_PLUGIN_ROOT}/scripts/moments.py" <twitch VOD or clip URL> --top 8` assegna un punteggio al VOD e scrive `candidates.md`.
 
-## 3. Cut the reaction clip
+## 3. Taglia la clip di reazione
 
 ```
 python "${CLAUDE_PLUGIN_ROOT}/scripts/cut.py" jobs/<id> --pick 1 --layout react --cam auto \
-  --title "Speed REALIZED why GTA 6 took ROCKSTAR 13 YEARS" --title-style box --captions bubble
+  --title "Speed HA CAPITO perché GTA 6 ci ha messo 13 ANNI" --title-style box --captions bubble
 ```
 
-- `--cam auto` finds the streamer's webcam itself (face detection plus the webcam frame around it). It prints where it found the cam. If it finds no stable face it falls back to the blur layout and says so. Check the first frame once; if the crop is wrong, pass `--cam x:y:w:h` fractions.
-- `--title-style box`: white band with bold black text on the seam. `--title-style outline`: white text with a thick black outline across the top of the game, for short titles ("Fighting Cops in GTA 6").
-- `--captions bubble`: white speech bubble ("Oh my god!"). `word`: word-by-word captions. `none`: title only.
-- Write the title with `hook-writer` (reaction titles section).
+- `--cam auto` trova da solo la webcam dello streamer (riconoscimento del volto più il riquadro della webcam intorno). Stampa dove l'ha trovata. Se non trova un volto stabile, passa al layout sfocato e lo dice. Controlla una volta il primo fotogramma; se il ritaglio è sbagliato, passa le frazioni `--cam x:y:w:h`.
+- `--title-style box`: banda bianca con testo nero in grassetto sulla giunzione. `--title-style outline`: testo bianco con contorno nero spesso sopra la parte alta del gioco, per titoli brevi («Scontri con la polizia in GTA 6»).
+- `--captions bubble`: fumetto bianco («Oddio!»). `word`: sottotitoli parola per parola. `none`: solo il titolo.
+- Scrivi il titolo con `hook-writer` (sezione dei titoli di reazione).
 
-## Rules
+## Regole
 
-- Clip a streamer only inside their campaign or with permission. Credit them in the post caption, not on the video.
-- Titles describe what happened. Never invent a quote or an opinion.
-- Run `rule-check` before posting. No spoilers in the title during launch week.
+- Clip uno streamer solo dentro la sua campagna o con il suo permesso. Accreditalo nella didascalia del post, non sul video.
+- I titoli descrivono quello che è successo. Mai inventare una citazione o un'opinione.
+- Fai passare `rule-check` prima di pubblicare. Niente spoiler nel titolo durante la settimana di lancio.

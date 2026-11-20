@@ -23,16 +23,18 @@ STATUSES = ["unverified", "verified", "wrong"]
 
 # secret-type mentions, per category (first match order decides the category)
 CAT_WORDS = [
-    ("easter_egg", r"easter eggs?|hidden detail|reference to|secret message"),
-    ("car", r"rare cars?|hidden cars?|secret cars?|unique vehicle|spawns?\b|car location"),
-    ("collectible", r"collectibles?|collect(?:ing)? all|hidden packages?|stunt jumps?|treasure|souvenirs?"),
-    ("money", r"cash|money|stash|safe code|payout|robbery loot"),
-    ("place", r"hidden (?:place|spot|location|area|room|cave|island)|secret (?:place|spot|location|area|room|cave|island)|location|unlocks?"),
+    ("easter_egg", r"easter eggs?|hidden detail|reference to|secret message|citazione|riferimento a|messaggio segreto|dettaglio nascosto"),
+    ("car", r"rare cars?|hidden cars?|secret cars?|unique vehicle|spawns?\b|car location|(?:auto|macchin[ae]) (?:rar[ae]|nascost[ae]|segret[ae])|veicolo unico"),
+    ("collectible", r"collectibles?|collect(?:ing)? all|hidden packages?|stunt jumps?|treasure|souvenirs?|collezionabil[ei]|oggetti da collezione|pacchi nascosti|salti acrobatici|tesoro"),
+    ("money", r"cash|money|stash|safe code|payout|robbery loot|soldi|contanti|bottino|cassaforte"),
+    ("place", r"hidden (?:place|spot|location|area|room|cave|island)|secret (?:place|spot|location|area|room|cave|island)|location|unlocks?|(?:posto|luogo|zona|stanza|grotta|isola) (?:nascost[oa]|segret[oa])|posizione|sblocc\w*"),
 ]
-KEYWORDS = re.compile(r"\b(hidden|secrets?|easter eggs?|money|cash|stash|collectibles?|rare cars?|locations?|spawns?|unlocks?|glitch[- ]free)\b", re.I)
+KEYWORDS = re.compile(r"\b(hidden|secrets?|easter eggs?|money|cash|stash|collectibles?|rare cars?|locations?|spawns?|unlocks?|glitch[- ]free"
+                      r"|nascost[oaie]|segret[oaie]|soldi|contanti|bottino|collezionabil[ei]|auto rar[ae]|posizion[ei]|sblocc\w*)\b", re.I)
 # never collected: exploits, glitches, dupes, leaks, early play
 BANNED = re.compile(r"glitch(?![- ]free)|\bexploit|\bdupe|duplicat|infinite (?:money|cash)|unlimited (?:money|cash)|money (?:glitch|hack|exploit)|"
-                    r"\bleak(?:s|ed)?\b|play(?:ing)? early|early access|before (?:the )?release|pre-?release|\bcheats?\b|\bmods?\b|\bhack", re.I)
+                    r"\bleak(?:s|ed)?\b|play(?:ing)? early|early access|before (?:the )?release|pre-?release|\bcheats?\b|\bmods?\b|\bhack"
+                    r"|soldi infiniti|glitch (?:dei )?soldi|duplic|\btrucc(?:o|hi)\b|gioca(?:re)? prima|prima dell'uscita|accesso anticipato", re.I)
 DEDUPE_RATIO = 0.78
 
 

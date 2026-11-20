@@ -4,7 +4,7 @@ top_streams(): Twitch's public web GQL endpoint with the public web Client-Id (s
 irc_chat():    anonymous IRC read-only chat (justinfan nick, no password).
 vod_chat():    not implemented, see note at the bottom.
 """
-import json, random, socket, ssl, sys, threading, time
+import json, random, re, socket, ssl, sys, threading, time
 from datetime import datetime, timezone
 
 GQL = "https://gql.twitch.tv/gql"
@@ -25,8 +25,19 @@ def gql(query, variables=None):
     return r.json()
 
 
-_Q_GAME = """query($name:String!,$n:Int!){ game(name:$name){ displayName streams(first:$n){ edges{ node{
+_Q_GAME = """query($name:String!,$n:Int!){ game(name:$name){ displayName streams(first:$n%s){ edges{ node{
  title viewersCount createdAt previewImageURL(width:640,height:360) broadcaster{ login displayName } } } } } }"""
+
+
+def _q_game(lang=None):
+    """Query of a category's live streams; lang (es. "it") keeps only streams in that language."""
+    if not lang:
+        return _Q_GAME % ""
+    if not re.fullmatch(r"[a-z]{2}", lang.lower()):
+        raise ValueError(f"lingua non valida: {lang!r} (usa due lettere, es. it)")
+    return _Q_GAME % f", options:{{broadcasterLanguages:[{lang.upper()}]}}"
+
+
 _Q_SEARCH = """query($q:String!){ searchCategories(userQuery:$q,first:5){ edges{ node{ ... on Game{ name displayName } } } } }"""
 
 
@@ -43,8 +54,10 @@ def _rows(game):
     return out
 
 
-def top_streams(game="Grand Theft Auto VI", limit=20):
-    """Live streams of a Twitch category, sorted by viewers (desc). Empty list if the category is unknown/offline."""
+def top_streams(game="Grand Theft Auto VI", limit=20, lang=None):
+    """Live streams of a Twitch category, sorted by viewers (desc). Empty list if the category is unknown/offline.
+    lang (es. "it"): only streams in that language."""
+    query = _q_game(lang)
     names = [game]
     try:
         d = gql(_Q_SEARCH, {"q": game})
@@ -58,7 +71,7 @@ def top_streams(game="Grand Theft Auto VI", limit=20):
         names.append("Grand Theft Auto VI" if "grand theft" not in game.lower() else "GTA VI")
     for nm in names:
         try:
-            g = ((gql(_Q_GAME, {"name": nm, "n": int(limit)}).get("data") or {}).get("game"))
+            g = ((gql(query, {"name": nm, "n": int(limit)}).get("data") or {}).get("game"))
         except Exception as ex:
             print(f"twitch gql failed: {ex}", file=sys.stderr)
             continue

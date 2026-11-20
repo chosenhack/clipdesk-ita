@@ -6,11 +6,15 @@ import argparse, difflib, json, re, sys, time, urllib.error, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-UA = "gta6-clip-desk/1.0 (questions-to-posts; read-only public JSON; contact via github Bodila51/gtavi-claudecode)"
-STARTERS = ("how", "where", "what", "can", "is", "does", "why", "when")
+UA = "clipdesk-ita/1.0 (questions-to-posts; read-only public JSON; github.com/chosenhack/clipdesk-ita)"
+STARTERS = ("how", "where", "what", "can", "is", "does", "why", "when",
+            "come ", "dove ", "cosa ", "che ", "quando ", "perché", "perche", "quale ", "quali ", "quanto ", "quanti ",
+            "si può", "si puo", "posso ", "c'è", "esiste ", "qualcuno sa")
 STOP = set("""a an the to of in on at for and or is are was were be been do does did can could would should will
 i you we they he she it my your our this that these those there here with about as by from if any
-gta gta6 gta5 vi 6 5 game games get got have has had im ive its dont not no yes so just really""".split())
+gta gta6 gta5 vi 6 5 game games get got have has had im ive its dont not no yes so just really
+il lo la gli le un una uno di da con su per tra fra ma che chi come dove cosa quando perché perche si non mi ti ci
+è c'è del della dei delle al alla ai nel nella sono ho hai ha hanno gioco qualcuno sa sapete""".split())
 _last = [0.0]
 
 
@@ -159,6 +163,9 @@ def match_facts(c, facts):
 
 
 def howto_title(q):
+    if q.strip().lower().startswith(tuple(s for s in STARTERS[8:])):  # Italian: keep the question, it reads better
+        t = re.sub(r"\s*\b(in|su|per)? ?gta ?(6|vi)\b", "", q.strip().rstrip("?"), flags=re.I).strip(" ,.")
+        return f"GTA 6: {t.upper()}?" if t else "GTA 6: [LA DOMANDA]?"
     t = q.strip().rstrip("?").strip()
     t = re.sub(r"^(how (do|can|could|would|should) (i|we|you|one)|how to|how)\s+", "", t, flags=re.I)
     t = re.sub(r"\b(in|on|for)? ?gta ?(6|vi)\b", "", t, flags=re.I).strip(" ,.")

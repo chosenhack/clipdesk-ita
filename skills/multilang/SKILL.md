@@ -1,26 +1,28 @@
 ---
 name: multilang
-description: Turn one finished clip into localized versions (Spanish, Portuguese, German, Russian and more) with translated word-by-word captions, translated hook, optional stock voiceover of the hook, and per-platform captions. Use when the user says "translate the clip", "make it in Spanish", "other languages", "localize", "5 languages".
+description: Trasforma una clip finita in versioni localizzate, di default in italiano, poi spagnolo, portoghese, tedesco, russo e altre, con sottotitoli tradotti parola per parola, gancio tradotto, voce fuori campo opzionale del gancio e didascalie per piattaforma. Usala quando l'utente dice «traduci la clip», «in italiano», «altre lingue», «localizza», «5 lingue».
 ---
 
-# Multilang
+# Multilingua
 
-Non-English GTA pages are underserved, so one clip can feed several audiences.
+Le pagine GTA in lingue diverse dall'inglese sono poco servite, quindi una clip può alimentare più pubblici. Il caso principale: prendi una clip da uno streamer inglese grosso e fanne una versione italiana, perché le pagine italiane su GTA 6 sono poche.
 
-Run after `clip-cutter` (the clip must already exist as `jobs/<id>/edits/clip_<n>.mp4` + `.json`):
+Esegui dopo `clip-cutter` (la clip deve già esistere come `jobs/<id>/edits/clip_<n>.mp4` + `.json`):
 
-`python "${CLAUDE_PLUGIN_ROOT}/scripts/translate.py" jobs/<id> --pick <n> --langs es,pt,de,ru [--voice]`
+`python "${CLAUDE_PLUGIN_ROOT}/scripts/translate.py" jobs/<id> --pick <n> --langs it [--voice]`
 
-Output in `jobs/<id>/edits/`: `clip_<n>_<lang>.mp4` per language and one `clip_<n>_captions.md` with X, Instagram and TikTok/Shorts captions per language.
+Altre lingue: `--langs it,es,pt,de,ru`.
 
-- Layout, hook box and loudness match the original cut. Override with `--layout`, `--hook` if needed.
-- `--voice` adds a stock text-to-speech voice (edge-tts: es-ES-AlvaroNeural, pt-BR-AntonioNeural, de-DE-ConradNeural, ru-RU-DmitryNeural) that reads the translated hook only, in the first 2.5 seconds, with the original audio ducked under it.
-- Never clone or imitate a real person's or streamer's voice. Stock voices only, and do not present the voiceover as the creator speaking.
+Output in `jobs/<id>/edits/`: un `clip_<n>_<lang>.mp4` per lingua e un solo `clip_<n>_captions.md` con le didascalie per X, Instagram e TikTok/Shorts in ogni lingua.
 
-Rules:
+- Layout, box del gancio e volume restano uguali al taglio originale. Se serve, sovrascrivi con `--layout` e `--hook`.
+- `--voice` aggiunge una voce sintetica standard (edge-tts: it-IT-DiegoNeural per l'italiano, es-ES-AlvaroNeural, pt-BR-AntonioNeural, de-DE-ConradNeural, ru-RU-DmitryNeural e altre) che legge solo il gancio tradotto, nei primi 2,5 secondi, con l'audio originale abbassato sotto.
+- Mai clonare o imitare la voce di una persona o di uno streamer reale. Solo voci standard, e non far passare la voce fuori campo come se parlasse il creatore.
 
-2. Translate facts, do not invent. Do not add claims, dates, prices or names that are not in the original clip or hook. Machine translation can slip: read each language's captions and hook before the human posts, and fix wrong or odd lines (ask the human if a language is unfamiliar).
-3. Run `rule-check` on each language version, same as the original.
-4. Post localized versions on separate localized pages or accounts, or as multi-language uploads where the platform supports them (for example YouTube multiple audio tracks and translated titles). Do not spam the same page with five versions of one clip.
-5. Captions: X no hashtags; Instagram 3 to 5 hashtags; TikTok and Shorts short plus a few hashtags.
-6. Do not upload anything. Show the files and captions to the human and wait for "yes".
+Regole:
+
+2. Traduci i fatti, non inventarli. Non aggiungere affermazioni, date, prezzi o nomi che non sono nella clip originale o nel gancio. La traduzione automatica può sbagliare: leggi didascalie e gancio di ogni lingua prima che l'utente pubblichi, e correggi le righe sbagliate o strane (chiedi all'utente se non conosce la lingua).
+3. Fai passare ogni versione linguistica da `rule-check`, come l'originale.
+4. Pubblica le versioni localizzate su pagine o account separati, oppure come caricamenti multilingua dove la piattaforma lo supporta (per esempio tracce audio multiple e titoli tradotti su YouTube). Non intasare la stessa pagina con cinque versioni della stessa clip.
+5. Didascalie: su X niente hashtag; su Instagram da 3 a 5 hashtag; su TikTok e Shorts brevi più qualche hashtag.
+6. Non caricare niente. Mostra file e didascalie all'utente e aspetta il «sì».

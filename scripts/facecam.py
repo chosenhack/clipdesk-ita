@@ -20,7 +20,7 @@ import cv2
 import numpy as np
 
 MODEL_URL = "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx"
-MODEL = Path(os.environ.get("LOCALAPPDATA", Path.home() / ".cache")) / "gtavi-claudecode" / "models" / "face_detection_yunet_2023mar.onnx"
+MODEL = Path(os.environ.get("LOCALAPPDATA", Path.home() / ".cache")) / "clipdesk-ita" / "models" / "face_detection_yunet_2023mar.onnx"
 N_FRAMES = 12
 MAX_W = 1280  # analysis width
 

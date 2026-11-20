@@ -4,16 +4,21 @@ Signals per second: loudness spikes, YouTube "most replayed" heatmap, live-chat 
 (YouTube VOD chat replay or a TwitchDownloader chat.json) and hype words in the transcript.
 Writes jobs/<id>/candidates.md + candidates.json.
 
-usage: python moments.py <url-or-file> [--top 8] [--min 15] [--max 40] [--chat chat.json] [--max-minutes 90]
+usage: python moments.py <url-or-file> [--top 8] [--min 15] [--max 40] [--chat chat.json] [--max-minutes 90] [--lang it]
 """
-import argparse, json, math, re, sys, wave
+import argparse, bisect, json, math, re, sys, wave
 from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).parent))
-from common import ffprobe, is_url, job_dir, load_json, run, save_json, tool, ytdlp_base, ytdlp_json
+from common import ffprobe, is_url, job_dir, join_elisions, load_json, run, save_json, tool, ytdlp_base, ytdlp_json
 
-HYPE = re.compile(r"\b(no way|oh my god|omg|what|wait|bro|let'?s go|holy|insane|crazy|yo+|wtf|dude|look at|nah|run|go go)\b", re.I)
-CHAT_HYPE = re.compile(r"(LMAO|LOL|KEKW|OMEGALUL|W+\b|CLIP|💀|😂|🔥|NO WAY|HOLY)", re.I)
+HYPE = re.compile(r"\b(no way|oh my god|omg|what|wait|bro|let'?s go|holy|insane|crazy|yo+|wtf|dude|look at|nah|run|go go"
+                  # italiano: le esclamazioni tipiche delle live
+                  r"|oddio|madonna|mamma mia|no vabb[eè]|vabb[eè]|assurd[oaie]|pazzesc[oaie]|incredibile|raga(?:zzi)?|guardate"
+                  r"|corri|scappa|aiuto|ma che|ma cosa|non ci credo|ma sei serio|dai dai|vai vai|andiamo|aspetta|daje|godo"
+                  r"|porca|cazzo|minchia)\b", re.I)
+CHAT_HYPE = re.compile(r"(LMAO|LOL|KEKW|OMEGALUL|W+\b|CLIP|💀|😂|🔥|NO WAY|HOLY"
+                       r"|AH(?:AH)+|\bXD+\b|ASSURD|PAZZESC|MADONNA|DAJE|GODO|NOO+\b)", re.I)
 
 
 def fetch(src, d, max_min):
@@ -48,7 +53,7 @@ def audio_rms(vid, d):
     return wav, 20 * np.log10(rms)
 
 
-def transcribe(wav, d):
+def transcribe(wav, d, lang=None):
     out = d / "transcript.json"
     if out.exists():
         return load_json(out)
@@ -63,13 +68,14 @@ def transcribe(wav, d):
 
     def run_on(device):
         model = WhisperModel("small", device=device, compute_type="float16" if device == "cuda" else "int8")
-        segs, _ = model.transcribe(pcm, word_timestamps=True, vad_filter=True)
+        segs, _ = model.transcribe(pcm, word_timestamps=True, vad_filter=True, language=lang or None)
         return [{"w": w.word.strip(), "s": round(w.start, 2), "e": round(w.end, 2)} for s in segs for w in (s.words or [])]
     try:
         words = run_on("cuda" if cuda else "cpu")
     except RuntimeError as e:  # GPU present but CUDA libraries missing: fall back to CPU
         print(f"GPU transcription unavailable ({str(e)[:80]}), using CPU")
         words = run_on("cpu")
+    words = join_elisions(words)
     save_json(out, words)
     return words
 
@@ -115,19 +121,28 @@ def main():
     ap.add_argument("src"); ap.add_argument("--top", type=int, default=8)
     ap.add_argument("--min", type=float, default=15); ap.add_argument("--max", type=float, default=40)
     ap.add_argument("--chat"); ap.add_argument("--max-minutes", type=int, default=90)
+    ap.add_argument("--lang", help="lingua del parlato, es. it (più precisa sulle live rumorose); vuoto = la riconosce da sola")
     a = ap.parse_args()
     d = job_dir(a.src)
     vid, info = fetch(a.src, d, a.max_minutes)
     dur = float(ffprobe(vid)["format"]["duration"])
     wav, db = audio_rms(vid, d)
     n = len(db)
-    words = transcribe(wav, d)
+    words = transcribe(wav, d, a.lang)
     # signals
     loud = smooth(np.clip(z(db - smooth(db, 30)), 0, None), 3)          # jumps above the local level
     hype = np.zeros(n)
+    # search the whole transcript, so phrases like "no way", "mamma mia" or "non ci credo" count too,
+    # and credit each match to the second where its first word starts
+    text, offs, secs = "", [], []
     for w in words:
-        if HYPE.search(w["w"]) and int(w["s"]) < n:
-            hype[int(w["s"])] += 1
+        text += " " if text else ""
+        offs.append(len(text)); secs.append(w["s"])
+        text += w["w"]
+    for m in HYPE.finditer(text):
+        t = int(secs[bisect.bisect_right(offs, m.start()) - 1])
+        if 0 <= t < n:
+            hype[t] += 1
     hype = smooth(hype, 5)
     heat = np.zeros(n)
     for h in (info.get("heatmap") or []):
@@ -157,12 +172,12 @@ def main():
         used[int(s0):int(e0)] = True
         text = " ".join(x["w"] for x in words if s0 <= x["s"] < e0)
         why = []
-        if loud[p] > 1: why.append("loudness spike")
-        if hype[p] > 0: why.append("hype words")
-        if heat[p] > 0.5: why.append(f"most replayed {heat[p]:.2f}")
-        if w_chat and chatz[p] > 1: why.append("chat spike")
+        if loud[p] > 1: why.append("picco di volume")
+        if hype[p] > 0: why.append("parole d'entusiasmo")
+        if heat[p] > 0.5: why.append(f"più rivisto {heat[p]:.2f}")
+        if w_chat and chatz[p] > 1: why.append("la chat esplode")
         picks.append({"n": len(picks) + 1, "start": round(s0, 2), "end": round(e0, 2), "peak": int(p),
-                      "score": round(float(score[p]), 2), "why": why or ["overall energy"], "text": text[:400]})
+                      "score": round(float(score[p]), 2), "why": why or ["energia generale"], "text": text[:400]})
     picks.sort(key=lambda x: x["start"])
     for i, x in enumerate(picks, 1):
         x["n"] = i
@@ -170,13 +185,13 @@ def main():
     save_json(d / "candidates.json", {"source": str(vid), "info": meta, "duration": dur, "candidates": picks,
                                       "signals": {"heatmap": bool(w_heat), "chat": bool(w_chat), "words": len(words)}})
     fmt = lambda t: f"{int(t // 60)}:{int(t % 60):02d}"
-    md = [f"# Candidates: {meta.get('title', '')}", f"source: {meta.get('webpage_url', '')}",
-          f"signals: loudness, transcript ({len(words)} words)" + (", most replayed" if w_heat else "") + (", chat" if w_chat else ""), ""]
+    md = [f"# Momenti: {meta.get('title', '')}", f"fonte: {meta.get('webpage_url', '')}",
+          f"segnali: volume, trascrizione ({len(words)} parole)" + (", più rivisti" if w_heat else "") + (", chat" if w_chat else ""), ""]
     for x in picks:
         md += [f"## {x['n']}. {fmt(x['start'])}-{fmt(x['end'])} ({x['end'] - x['start']:.0f}s) score {x['score']}",
-               f"why: {', '.join(x['why'])}", f"> {x['text']}", ""]
+               f"perché: {', '.join(x['why'])}", f"> {x['text']}", ""]
     (d / "candidates.md").write_text("\n".join(md), encoding="utf-8")
-    print(f"job: {d}\n{len(picks)} candidates -> {d / 'candidates.md'}")
+    print(f"lavoro: {d}\n{len(picks)} momenti -> {d / 'candidates.md'}")
 
 
 if __name__ == "__main__":

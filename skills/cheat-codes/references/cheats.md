@@ -1,49 +1,49 @@
-# GTA 6 cheat codes (PS5 and Xbox Series X|S)
+# Codici cheat di GTA 6 (PS5 e Xbox Series X|S)
 
-Status as of Nov 18, 2026: codes reported by pre-launch guides (GameSpot, Red Bull, Insider Gaming and others). Rockstar has no official cheat page yet. Recheck every code in the game after launch and update the status column.
+Stato al 18 novembre 2026: codici riportati dalle guide pre-lancio (GameSpot, Red Bull, Insider Gaming e altre). Rockstar non ha ancora una pagina ufficiale dei cheat. Ricontrolla ogni codice nel gioco dopo il lancio e aggiorna la colonna dello stato.
 
-## How to enter
+## Come inserirli
 
-1. Finish the main story. Cheats unlock after that, some need an extra task (see the table).
-2. Press Up on the D-pad to open the in-game phone.
-3. PS5: hold L1 + R1. Xbox: hold LB + RB.
-4. Enter the D-pad sequence. The sequences are the same on both consoles.
+1. Finisci la storia principale. I cheat si sbloccano dopo, e alcuni richiedono un'attività in più (vedi la tabella).
+2. Premi Su sulla croce direzionale per aprire il telefono nel gioco.
+3. PS5: tieni premuti L1 + R1. Xbox: tieni premuti LB + RB.
+4. Inserisci la sequenza della croce direzionale. Le sequenze sono le stesse su entrambe le console.
 
-**Save first.** Using a cheat blocks saving, trophies and achievements for the rest of that session.
+**Salva prima.** Usare un cheat blocca salvataggi, trofei e obiettivi per il resto di quella sessione.
 
-## Codes
+## Codici
 
-| Cheat | D-pad sequence | Unlock | Status |
+| Cheat | Sequenza della croce direzionale | Sblocco | Stato |
 |---|---|---|---|
-| $250,000 | ↑ → ↓ ← ↑ ← ↓ → | Main story | reported |
-| Unlimited Focus | ↓ ↑ ↑ ↓ ↑ ↓ ↑ ↓ ↑ → | Main story | reported |
-| Cycle Weather | ↓ → ↑ ↓ → ↑ → | Main story (one guide says: reveal the whole map) | reported |
-| Raise Heat Level | ← ↓ → ↓ ↑ ↓ ↑ | Lose a 3-star wanted level 25 times | reported |
-| Body Armor | ↓ ↑ ← ↑ ↑ ↑ ↑ ↑ ↓ ↓ | Complete 100 workouts | reported |
-| Max Ammo | ↓ ↑ → ↓ ← ← ↑ ↑ ↓ ← | 25 bronze medals or better at shooting ranges | reported |
-| Infinite Ammo | ↓ ↑ → ↓ ← ← ↑ ↓ ↓ ↓ | 25 silver medals or better at shooting ranges | reported |
-| No Reload | ↓ ↑ → ↓ ← ← ↑ ↓ ↓ ↑ | 25 gold medals at shooting ranges | reported |
-| Attack Force | ↓ ↑ ← ← → ↓ ↓ ↑ ↓ | Main story | reported |
-| Exploding Balls | ↓ ↑ ← ← → ↓ ↓ ↑ → | Deal explosive damage to 20 enemies | reported |
-| Vehicle Force | ↓ ↑ ← ← → ↓ ← ↑ ↓ | Kill 25 enemies using a vehicle | reported |
-| Maibatsu Boomazoom (spawn) | ← ↑ → ↓ ← ← ↑ ← | Complete 5 shopping challenges | reported |
-| MTL Pumper (spawn) | ← ↑ → ↓ ← → → ↑ | Discover it in the Progress menu | reported |
-| HVY Bulldozer (spawn) | ← ↑ → ↓ ← → → ↓ | Discover it in the Progress menu | reported |
-| Cataclysm (filter) | ↓ ↓ ↑ → → ↑ ← ← → → | Discover Martha's Vamos in the Progress menu | reported |
-| Dollhouse (filter: vivid colors, narrow aspect ratio) | ↓ ↓ ↑ → → ↑ ← ← ↓ → | Spend 8 hours with your partner | reported (Stupid Dope) |
-| Faded Glory (filter: color CRT TV look) | ↓ ↓ ↑ → → ↑ ← ← ← → | Rob 50 stores with your partner | reported (GameSpot) |
+| $250,000 | ↑ → ↓ ← ↑ ← ↓ → | Storia principale | segnalato |
+| Unlimited Focus | ↓ ↑ ↑ ↓ ↑ ↓ ↑ ↓ ↑ → | Storia principale | segnalato |
+| Cycle Weather | ↓ → ↑ ↓ → ↑ → | Storia principale (una guida dice: rivela l'intera mappa) | segnalato |
+| Raise Heat Level | ← ↓ → ↓ ↑ ↓ ↑ | Perdi un livello di ricercato da 3 stelle 25 volte | segnalato |
+| Body Armor | ↓ ↑ ← ↑ ↑ ↑ ↑ ↑ ↓ ↓ | Completa 100 allenamenti | segnalato |
+| Max Ammo | ↓ ↑ → ↓ ← ← ↑ ↑ ↓ ← | 25 medaglie di bronzo o superiori ai poligoni di tiro | segnalato |
+| Infinite Ammo | ↓ ↑ → ↓ ← ← ↑ ↓ ↓ ↓ | 25 medaglie d'argento o superiori ai poligoni di tiro | segnalato |
+| No Reload | ↓ ↑ → ↓ ← ← ↑ ↓ ↓ ↑ | 25 medaglie d'oro ai poligoni di tiro | segnalato |
+| Attack Force | ↓ ↑ ← ← → ↓ ↓ ↑ ↓ | Storia principale | segnalato |
+| Exploding Balls | ↓ ↑ ← ← → ↓ ↓ ↑ → | Infliggi danni esplosivi a 20 nemici | segnalato |
+| Vehicle Force | ↓ ↑ ← ← → ↓ ← ↑ ↓ | Uccidi 25 nemici usando un veicolo | segnalato |
+| Maibatsu Boomazoom (spawn) | ← ↑ → ↓ ← ← ↑ ← | Completa 5 sfide di shopping | segnalato |
+| MTL Pumper (spawn) | ← ↑ → ↓ ← → → ↑ | Scoprilo nel menu Progressi | segnalato |
+| HVY Bulldozer (spawn) | ← ↑ → ↓ ← → → ↓ | Scoprilo nel menu Progressi | segnalato |
+| Cataclysm (filtro) | ↓ ↓ ↑ → → ↑ ← ← → → | Scopri Martha's Vamos nel menu Progressi | segnalato |
+| Dollhouse (filtro: colori vividi, rapporto d'aspetto stretto) | ↓ ↓ ↑ → → ↑ ← ← ↓ → | Passa 8 ore con il tuo partner | segnalato (Stupid Dope) |
+| Faded Glory (filtro: aspetto CRT a colori) | ↓ ↓ ↑ → → ↑ ← ← ← → | Rapina 50 negozi con il tuo partner | segnalato (GameSpot) |
 
-Statuses: **reported** = listed in at least one published guide; **unconfirmed** = not found in any guide, never post it; **verified** = tested in the game after launch (add who and when).
+Stati: **segnalato** = presente in almeno una guida pubblicata; **non confermato** = non trovato in nessuna guida, non pubblicarlo mai; **verificato** = testato nel gioco dopo il lancio (aggiungi chi e quando).
 
-## Fake codes going around (never post these)
+## Codici falsi in circolazione (non pubblicarli mai)
 
-A viral image titled "GTA VI cheat codes - CRACKED BY FABLE 5.2" mixes real codes with invented ones.
+Un'immagine virale intitolata "GTA VI cheat codes - CRACKED BY FABLE 5.2" mescola codici veri con codici inventati.
 
-- "Raise Wanted Level": no cheat by that name. The reported cheat is Raise Heat Level: ← ↓ → ↓ ↑ ↓ ↑.
-- Incendiary Ammo, Hauners Rhino tank, Hauners P-996 Lazer, Golden Hour filter, Dark Mirror filter: the cheats are in the guides, but every guide marks their code as not found or TBD. Any code shown for them is a guess.
-- Inflatable Flamingo: only an unlock task appears in one guide (AlcastHQ: destroy 50 cocaine flamingos), no code. Any code shown for it is a guess.
+- "Raise Wanted Level": nessun cheat ha questo nome. Il cheat segnalato è Raise Heat Level: ← ↓ → ↓ ↑ ↓ ↑.
+- Incendiary Ammo, Hauners Rhino tank, Hauners P-996 Lazer, Golden Hour filter, Dark Mirror filter: i cheat compaiono nelle guide, ma ogni guida indica il loro codice come non trovato o TBD. Qualsiasi codice mostrato per questi è un'ipotesi.
+- Inflatable Flamingo: in una sola guida compare solo un compito di sblocco (AlcastHQ: distruggi 50 fenicotteri di cocaina), nessun codice. Qualsiasi codice mostrato per questo è un'ipotesi.
 
-## Sources
+## Fonti
 
 - GameSpot: https://www.gamespot.com/articles/all-gta-6-cheats-and-how-to-unlock-them/
 - Red Bull: https://www.redbull.com/int-en/gta-6-cheat-codes

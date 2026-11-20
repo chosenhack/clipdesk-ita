@@ -10,7 +10,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 from common import ffprobe, load_json
 
 BANNED = ["leak", "leaked build", "play early", "early access download", "free download", "crack", "piracy",
-          "mod menu", "money glitch", "afk bot"]
+          "mod menu", "money glitch", "afk bot",
+          # italiano
+          "gioca prima", "giocalo prima", "accesso anticipato", "download gratis", "scarica gratis", "gioco gratis",
+          "codici gratis", "pirata", "soldi infiniti", "glitch soldi", "glitch dei soldi", "bot afk"]
 
 
 def parse_campaign(path):

@@ -1,18 +1,18 @@
 {
-  "name": "gtavi-claudecode",
-  "description": "A faceless GTA 6 clipping desk: find campaigns, trends and moments, cut captioned vertical clips, check the rules, learn from real numbers.",
+  "name": "clipdesk-ita",
+  "description": "Una redazione di clip di GTA 6 in italiano: campagne, tendenze e momenti migliori, clip verticali con sottotitoli, controllo delle regole, numeri veri.",
   "owner": {
-    "name": "Bodila51",
-    "url": "https://github.com/Bodila51"
+    "name": "chosenhack",
+    "url": "https://github.com/chosenhack"
   },
   "plugins": [
     {
-      "name": "gtavi-claudecode",
+      "name": "clipdesk-ita",
       "source": "./",
-      "description": "Run a faceless GTA 6 clipping page with the fewest human actions. You approve every post.",
-      "version": "0.1.0",
+      "description": "Le live di GTA 6 diventano clip verticali in italiano, con il minimo di lavoro a mano. Approvi tu ogni post.",
+      "version": "0.2.0",
       "category": "productivity",
-      "tags": ["gta6", "clipping", "video", "shorts", "whop"]
+      "tags": ["gta6", "clipping", "video", "shorts", "reels", "italiano"]
     }
   ]
 }

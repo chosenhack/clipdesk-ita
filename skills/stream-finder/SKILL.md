@@ -1,19 +1,25 @@
 ---
 name: stream-finder
-description: Find live YouTube streams about GTA 6 ranked by concurrent viewers. Use when the user asks who is streaming now, wants live moments to clip, or before live-mode.
+description: Trova le live YouTube su GTA 6 ordinate per spettatori contemporanei. Usala quando l'utente chiede chi sta trasmettendo ora, vuole momenti in diretta da tagliare, dice «trova le live» o «chi streamma adesso», o prima di live-mode.
 ---
 
-# Stream finder
+# Ricerca live
 
-Run:
+Esegui:
 
 `python "${CLAUDE_PLUGIN_ROOT}/scripts/streams.py" --query "gta 6"`
 
-Then:
+Per trovare streamer italiani esegui:
 
-1. Show the top 10 live streams: channel, title, concurrent viewers, link.
-2. Skip streams that are clearly leaks, early-access tricks or pirated copies. Say why in one line.
-3. Recommend 1 to 3 streams. Prefer official channels and creators who allow sharing.
-4. Offer the next step: `live-mode <url> --minutes 60` to record and clip chat spikes, or `moment-finder` on a finished VOD.
+`python "${CLAUDE_PLUGIN_ROOT}/scripts/streams.py" --query "gta 6 ita" --lang it`
 
-Viewer counts are what the script returns at that moment. Do not guess or round them up.
+Su Twitch il filtro segue la lingua dello streamer; su YouTube basta la query italiana. Senza `--lang` elenca le dirette in tutte le lingue.
+
+Poi:
+
+1. Mostra le prime 10 live: canale, titolo, spettatori contemporanei, link.
+2. Salta le dirette che sono chiaramente fughe di contenuti, trucchi di accesso anticipato («gioca prima») o copie pirata. Dillo in una riga.
+3. Consiglia da 1 a 3 dirette. Preferisci canali ufficiali e creator che permettono la condivisione.
+4. Proponi il passo successivo: `live-mode <url> --minutes 60` per registrare e tagliare i picchi di chat, oppure `moment-finder` su un VOD finito.
+
+I numeri di spettatori sono quelli che lo script restituisce in quel momento. Non indovinare né arrotondare per eccesso.

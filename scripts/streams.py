@@ -55,11 +55,11 @@ def youtube(query, limit):
     return out
 
 
-def twitch_nokey(game="Grand Theft Auto VI", limit=20):
+def twitch_nokey(game="Grand Theft Auto VI", limit=20, lang=None):
     """No account/API key: Twitch public web GQL (see twitch.py)."""
     import twitch as tw
     try:
-        rows = tw.top_streams(game, limit)
+        rows = tw.top_streams(game, limit, lang=lang)
     except Exception as e:
         print(f"twitch (no key) failed: {e}", file=sys.stderr)
         return []
@@ -68,10 +68,10 @@ def twitch_nokey(game="Grand Theft Auto VI", limit=20):
              "live_for": fmt_dur(now - tw.started_ts(r["created_at"])) if tw.started_ts(r["created_at"]) else ""} for r in rows]
 
 
-def twitch(query):
+def twitch(query, lang=None):
     cid, tok = os.environ.get("TWITCH_CLIENT_ID"), os.environ.get("TWITCH_TOKEN")
     if not (cid and tok):
-        return twitch_nokey()
+        return twitch_nokey(lang=lang)
     import requests
     h = {"Client-Id": cid, "Authorization": f"Bearer {tok}"}
     try:
@@ -79,7 +79,10 @@ def twitch(query):
         if not g.get("data"):
             return []
         gid = g["data"][0]["id"]
-        s = requests.get("https://api.twitch.tv/helix/streams", params={"game_id": gid, "first": 100}, headers=h, timeout=15).json()
+        params = {"game_id": gid, "first": 100}
+        if lang:
+            params["language"] = lang.lower()
+        s = requests.get("https://api.twitch.tv/helix/streams", params=params, headers=h, timeout=15).json()
     except Exception as e:
         print(f"twitch failed: {e}", file=sys.stderr)
         return []
@@ -116,9 +119,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--query", default="gta 6"); ap.add_argument("--limit", type=int, default=20)
     ap.add_argument("--out", default="streams.md")
+    ap.add_argument("--lang", help="solo le live di Twitch in questa lingua, es. it. Su YouTube metti la lingua nella "
+                                   "ricerca: --query \"gta 6 ita\"")
     a = ap.parse_args()
     sections = [("YouTube", youtube(a.query, a.limit))]
-    t = twitch(a.query)
+    t = twitch(a.query, lang=a.lang)
     if t:
         t = sorted(t, key=lambda r: r["viewers"] or -1, reverse=True)[:a.limit]
     if t is not None:
@@ -127,21 +132,22 @@ def main():
     if k:
         sections.append(("Kick", k))
     stamp = time.strftime("%Y-%m-%d %H:%M")
-    md = [f"# Live streams: {a.query}", f"Checked {stamp}. Viewer counts are as returned at that moment.", ""]
+    md = [f"# Live: {a.query}" + (f" (Twitch: solo lingua {a.lang})" if a.lang else ""),
+          f"Controllato il {stamp}. Gli spettatori sono quelli di quel momento.", ""]
     for name, rows in sections:
         rows = sorted(rows, key=lambda r: r["viewers"] or -1, reverse=True)
         md += [f"## {name}", ""]
         if not rows:
-            md += ["No live streams found.", ""]
+            md += ["Nessuna live trovata.", ""]
             continue
-        md += ["| # | Channel | Title | Viewers | Live for | URL |", "|---|---|---|---|---|---|"]
+        md += ["| # | Canale | Titolo | Spettatori | In live da | URL |", "|---|---|---|---|---|---|"]
         for n, r in enumerate(rows, 1):
             v = "" if r["viewers"] is None else r["viewers"]
             md.append(f"| {n} | {r['channel']} | {r['title'].replace('|', '/')} | {v} | {r['live_for']} | {r['url']} |")
             print(f"{name:8} {str(v):>7}  {r['channel'][:24]:24} {r['title'][:50]:50} {r['url']}")
         md.append("")
     Path(a.out).write_text("\n".join(md), encoding="utf-8")
-    print(f"wrote {a.out}")
+    print(f"scritto {a.out}")
 
 
 if __name__ == "__main__":

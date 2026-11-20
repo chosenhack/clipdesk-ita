@@ -9,7 +9,7 @@ usage: python cut.py jobs/<id> --pick 1 [--layout fill|blur|facecam|react] [--ho
 import argparse, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
-from common import load_json, run, save_json, tool
+from common import join_elisions, load_json, need_subtitles, run, save_json, tool
 
 W, H = 1080, 1920
 
@@ -20,10 +20,37 @@ def ts(t):
 
 
 import re as _re
-_SLURS = _re.compile(r"\b(nigg\w*|n[i1]gg?a\w*|f[a@]gg?\w*|retard\w*|tranny\w*|chink\w*|spic\w*|kike\w*)\b", _re.I)
+_SLURS = _re.compile(r"\b(nigg\w*|n[i1]gg?a\w*|f[a@]gg?\w*|retard\w*|tranny\w*|chink\w*|spic\w*|kike\w*"
+                     r"|negr[oaie]|froci\w*|frocett\w*|ricchion\w*|culattone\w*|terron\w*|mongoloid\w*)\b", _re.I)
 
 
-_SWEARS = _re.compile(r"\b(fuck\w*|motherfuck\w*|shit\w*|bitch\w*|cunt\w*|dick\w*|pussy\w*|asshole\w*|bastard\w*|whore\w*|slut\w*)\b", _re.I)
+_SWEARS = _re.compile(r"\b(fuck\w*|motherfuck\w*|shit\w*|bitch\w*|cunt\w*|dick\w*|pussy\w*|asshole\w*|bastard\w*|whore\w*|slut\w*"
+                      r"|cazz\w*|merd\w*|stronz\w*|vaffanculo|fanculo|affanculo|minchi\w*|coglion\w*|puttan\w*|troi[ae]|figa"
+                      r"|zoccol\w*)\b", _re.I)
+
+# Italian blasphemies: always masked, like slurs (platforms and campaigns treat them that way).
+# One word ("porcodio") or two ("porco dio", "dio cane"): with two, both words are masked.
+_BLASPH = _re.compile(r"\b(porcod+io|dio(?:cane|porco|bestia|boia|maiale)|porcamadonna|madonna(?:puttana|troia|maiala))\b", _re.I)
+_B_FIRST = {"porco", "porca", "maledetto", "maledetta"}
+_B_HOLY = {"dio", "madonna", "cristo", "gesù", "gesu"}
+_B_AFTER = {"cane", "porco", "porca", "bestia", "boia", "maiale", "maiala", "ladro", "merda", "serpente", "infame"}
+
+
+def _bare(w):
+    return _re.sub(r"\W", "", w.lower())
+
+
+def mask_blasphemy(ws):
+    """Mask Italian blasphemies in a list of word dicts ({"w": ...}); returns new dicts."""
+    out = [dict(w) for w in ws]
+    hit = set()
+    for i in range(len(out) - 1):
+        a, b = _bare(out[i]["w"]), _bare(out[i + 1]["w"])
+        if (a in _B_FIRST and b in _B_HOLY) or (a in _B_HOLY and b in _B_AFTER):
+            hit.update((i, i + 1))
+    for i, w in enumerate(out):
+        w["w"] = _re.sub(r"\w+", _mask, w["w"], count=1) if i in hit else _BLASPH.sub(_mask, w["w"])
+    return out
 
 
 def _mask(m):
@@ -70,7 +97,7 @@ Style: Bubble,Arial,58,&H00000000,&H00000000,&H00FFFFFF,&H00FFFFFF,-1,0,0,0,100,
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
     ev = []
-    ws = [dict(w, w=clean(w["w"], profanity)) for w in words if s0 <= w["s"] < e0 and w["w"]]
+    ws = mask_blasphemy([dict(w, w=clean(w["w"], profanity)) for w in words if s0 <= w["s"] < e0 and w["w"]])
     # groups of up to 3 words, break on punctuation or pauses
     groups, cur = [], []
     for w in ws:
@@ -198,21 +225,22 @@ def game_offset(video, s0, e0, src, cam_box):
 
 def main():
     ap = argparse.ArgumentParser()
+    need_subtitles()
     ap.add_argument("job"); ap.add_argument("--pick", type=int, default=1)
     ap.add_argument("--layout", choices=["fill", "blur", "facecam", "react"], default="blur")
-    ap.add_argument("--title", default="", help="reaction title, e.g. 'Speed REALIZED why GTA 6 took 13 YEARS'")
+    ap.add_argument("--title", default="", help="titolo della reazione, es. 'Speed HA CAPITO perché GTA 6 ci ha messo 13 ANNI'")
     ap.add_argument("--title-style", choices=["box", "outline"], default="box")
     ap.add_argument("--title-secs", type=float, default=0, help="0 = whole clip")
     ap.add_argument("--captions", choices=["word", "bubble", "none"], default="word")
     ap.add_argument("--hook", default="")
-    ap.add_argument("--allow-profanity", action="store_true", help="keep swear words in captions (slurs are always masked)")
+    ap.add_argument("--allow-profanity", action="store_true", help="keep swear words in captions (slurs and Italian blasphemies are always masked)")
     ap.add_argument("--cam", default="auto", help="auto (find the webcam) or x:y:w:h fractions")
     ap.add_argument("--start", type=float); ap.add_argument("--end", type=float)
     a = ap.parse_args()
     d = Path(a.job); c = load_json(d / "candidates.json")
     pick = next(x for x in c["candidates"] if x["n"] == a.pick)
     s0 = a.start if a.start is not None else pick["start"]; e0 = a.end if a.end is not None else pick["end"]
-    words = load_json(d / "transcript.json")
+    words = join_elisions(load_json(d / "transcript.json"))
     out = d / "edits"; out.mkdir(exist_ok=True)
     layout, cam, side = a.layout, a.cam, 'right'
     face_expr = None
