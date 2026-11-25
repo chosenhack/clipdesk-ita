@@ -1,11 +1,11 @@
 ---
 name: hook-writer
-description: Scrivi i ganci sullo schermo per le clip di GTA 6. Usala ogni volta che una clip ha bisogno di un gancio, di un titolo o di un'apertura per la didascalia, o quando l'utente dice «scrivi i ganci» o «trova un titolo».
+description: Scrivi i ganci a video e le CTA di chiusura per le clip di GTA 6. Usala ogni volta che una clip ha bisogno di un gancio, di una CTA, di un titolo o di un'apertura per la didascalia, o quando l'utente dice «scrivi i ganci», «trova un titolo» o «che CTA metto».
 ---
 
-# Scrittura ganci
+# Scrittura ganci e CTA
 
-Scrivi 3 opzioni per clip, in stile frase (solo la prima lettera maiuscola). Brevi: da 3 a 9 parole entrano nel box del gancio. I ganci sono in italiano. Un gancio crea curiosità, non descrive: sbagliato «Clip divertente di GTA 6», giusto «Ha trovato l'auto che nessuno aveva visto».
+Scrivi 3 opzioni per clip, in stile frase (solo la prima lettera maiuscola). Brevi: da 3 a 8 parole entrano nel box del gancio. I ganci sono in italiano. Un gancio crea curiosità, non descrive: sbagliato «Clip divertente di GTA 6», giusto «Ha trovato l'auto che nessuno aveva visto».
 
 ## Cosa funziona
 
@@ -26,11 +26,30 @@ Per una clip di reazione di uno streamer, il titolo sta sulla linea di giunzione
 
 Descrivi quello che succede sullo schermo. Mai mettere parole in bocca allo streamer: niente citazioni che non ha detto, niente opinioni inventate. Le emoji sono facoltative, al massimo 2.
 
+## Il gancio dell'intro
+
+Nel montaggio (`cut.py --hook`) il gancio sta sui primi 2 secondi, sopra il momento clou mostrato in anteprima. Le immagini fanno già vedere l'azione: il testo apre la curiosità su come va a finire, non la racconta. Da 3 a 8 parole, niente emoji (il font del video non le disegna).
+
+- Giusto: "Ha rubato un aereo, guarda il decollo"
+- Sbagliato: "Si schianta con l'aereo" (svela il finale)
+
+## La CTA di chiusura
+
+Ogni clip finisce con una chiamata all'azione (`cut.py --cta`), sull'ultimo fotogramma. Scrivi 3 opzioni, da 4 a 8 parole, e segna la migliore. Deve chiedere un'azione precisa, mai solo «seguimi»:
+
+- Domanda da commentare, legata alla clip: "Commenta: tu saresti decollato?"
+- Scelta tra due: "Commenta: avresti sparato o guidato?"
+- Condivisione: "Mandalo a chi guida come lui"
+- Serie: "Segui per la clip di domani" solo se domani la clip c'è davvero.
+
+Niente emoji nella CTA a video. Nella didascalia la stessa domanda può tornare, con un'emoji.
+
 ## Cosa non funziona
 
 - Etichette generiche: "Clip di GTA 6", "Momento divertente"
 - "Aspetta e vedrai", "Non ci crederai", "Guarda fino alla fine"
 - Urgenza finta o MAIUSCOLO ovunque
+- CTA vaghe: "Seguimi", "Like e iscriviti"
 
 ## Regole
 
@@ -41,4 +60,4 @@ Descrivi quello che succede sullo schermo. Mai mettere parole in bocca allo stre
 5. Non riusare lo stesso gancio nell'arco di una settimana. Controlla `log.md`.
 6. I fatti nel gancio devono essere veri e verificati. I numeri devono corrispondere alla clip.
 
-Restituisci le 3 opzioni e segna quella che consigli.
+Restituisci le 3 opzioni di gancio e le 3 di CTA, e segna quelle che consigli.

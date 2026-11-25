@@ -1,9 +1,14 @@
-"""Cut one candidate into a finished vertical clip.
+"""Cut one candidate into a finished vertical clip: intro with the hook, the clip, the call to action.
 
-1080x1920, 30 fps, word-by-word burned captions (slurs and swears masked), hook box in the first seconds,
-loudness normalised to -14 LUFS. Writes jobs/<id>/edits/clip_<n>.mp4 + .json (metadata for check.py).
+1080x1920, 30 fps, word-by-word burned captions (slurs and swears masked), loudness normalised to -14 LUFS.
+- Intro (--hook, --intro-secs 2): the clip's loudest moment shown first, with the hook big on screen.
+  --intro-secs 0 keeps the old style: the hook box over the first seconds of the clip.
+- Clip: the moment, with captions.
+- CTA (--cta "TEXT", --cta-secs 2.5): the last frame, blurred and darkened, with the call to action.
+Writes jobs/<id>/edits/clip_<n>.mp4 + .json (metadata for check.py).
 
-usage: python cut.py jobs/<id> --pick 1 [--layout fill|blur|facecam|react] [--hook "TEXT"]
+usage: python cut.py jobs/<id> --pick 1 [--layout fill|blur|facecam|react] [--hook "TEXT"] [--intro-secs 2]
+                     [--cta "TEXT"] [--cta-secs 2.5]
                      [--cam auto|x:y:w:h] [--title "TEXT" --title-style box|outline --title-secs 0] [--captions word|bubble|none]
 """
 import argparse, sys
@@ -141,6 +146,102 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     return hdr + "\n".join(ev) + "\n"
 
 
+CARD_HDR = f"""[Script Info]
+ScriptType: v4.00+
+PlayResX: {W}
+PlayResY: {H}
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Intro,Arial Black,96,&H00000000,&H00000000,&H00FFFFFF,&H00FFFFFF,-1,0,0,0,100,100,0,0,3,22,0,5,60,60,0,1
+Style: Cta,Arial Black,88,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,9,4,5,70,70,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+INTRO_Y = {"fill": 560, "blur": 400, "facecam": 730, "react": 730}  # above the action; on the seam for cam layouts
+
+
+def card_ass(text, kind, secs, layout="blur"):
+    """ASS of the intro (the hook, big, with a pop) or of the closing card (the call to action)."""
+    if kind == "intro":
+        body = "\\N".join(wrap(esc(text), 15))
+        anim = "{\\fscx70\\fscy70\\t(0,140,\\fscx106\\fscy106)\\t(140,240,\\fscx100\\fscy100)}"
+        y, style = INTRO_Y.get(layout, 560), "Intro"
+    else:
+        body = "\\N".join(wrap(esc(text), 17))
+        anim = "{\\fad(150,0)\\fscx85\\fscy85\\t(0,180,\\fscx100\\fscy100)}"
+        y, style = H // 2, "Cta"
+    return CARD_HDR + f"Dialogue: 0,{ts(0)},{ts(secs)},{style},,0,0,0,,{{\\pos({W // 2},{y})}}{anim}{body}\n"
+
+
+def loudest(d, s0, e0):
+    """Second of the source with the loudest audio inside [s0, e0], from the job's audio.wav (None if missing)."""
+    wav = Path(d) / "audio.wav"
+    if not wav.exists():
+        return None
+    import wave
+    import numpy as np
+    with wave.open(str(wav)) as w:
+        rate = w.getframerate()
+        w.setpos(min(int(s0 * rate), w.getnframes()))
+        x = np.frombuffer(w.readframes(max(0, int((e0 - s0) * rate))), dtype=np.int16).astype(np.float32)
+    n = len(x) // rate
+    if n == 0:
+        return None
+    rms = np.sqrt((x[: n * rate].reshape(n, rate) ** 2).mean(1) + 1e-9)
+    return s0 + int(np.argmax(np.convolve(rms, np.ones(2) / 2, mode="same")))
+
+
+def has_audio(src):
+    from common import ffprobe
+    return any(x.get("codec_type") == "audio" for x in ffprobe(src)["streams"])
+
+
+ENC_PART = ["-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "256k", "-ar", "48000"]
+ENC_FINAL = ["-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-ar", "48000",
+             "-movflags", "+faststart"]
+LOUDNORM = "loudnorm=I=-14:TP=-1.5:LRA=11"
+
+
+def render(src, s0, e0, vf, out, af=None, enc=ENC_PART, audio=True):
+    """One stretch of the source through a layout filter graph ending in [vo]."""
+    cmd = [tool("ffmpeg"), "-y", "-v", "error", "-ss", f"{s0:.2f}", "-to", f"{e0:.2f}", "-i", str(src)]
+    if audio:
+        cmd += ["-filter_complex", vf, "-map", "[vo]", "-map", "0:a"]
+    else:  # silent source: a silent track, so the parts can be joined
+        cmd += ["-f", "lavfi", "-t", f"{e0 - s0:.2f}", "-i", "anullsrc=r=48000:cl=stereo", "-filter_complex", vf,
+                "-map", "[vo]", "-map", "1:a"]
+    run(cmd + (["-af", af] if af else []) + enc + [str(out)])
+
+
+def cta_card(main_mp4, text, secs, parts):
+    """The closing card: the clip's last frame, blurred and darkened, with the call to action, in silence."""
+    last = parts / "last.png"
+    run([tool("ffmpeg"), "-y", "-v", "error", "-sseof", "-0.15", "-i", str(main_mp4), "-frames:v", "1", "-update", "1", str(last)])
+    ass = parts / "cta.ass"
+    ass.write_text(card_ass(text, "cta", secs), encoding="utf-8")
+    sub = str(ass).replace("\\", "/").replace(":", "\\:")
+    out = parts / "cta.mp4"
+    run([tool("ffmpeg"), "-y", "-v", "error", "-loop", "1", "-framerate", "30", "-t", f"{secs:.2f}", "-i", str(last),
+         "-f", "lavfi", "-t", f"{secs:.2f}", "-i", "anullsrc=r=48000:cl=stereo",
+         "-filter_complex", f"[0:v]scale={W}:{H},setsar=1,boxblur=20:2,eq=brightness=-0.25,subtitles='{sub}',format=yuv420p[vo]",
+         "-map", "[vo]", "-map", "1:a", "-shortest"] + ENC_PART + [str(out)])
+    return out
+
+
+def join(parts, out):
+    """Intro + clip + CTA into one file, audio normalised once over the whole."""
+    cmd = [tool("ffmpeg"), "-y", "-v", "error"]
+    for p in parts:
+        cmd += ["-i", str(p)]
+    fc = "".join(f"[{i}:v]setsar=1,fps=30,format=yuv420p[v{i}];"
+                 f"[{i}:a]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo[a{i}];" for i in range(len(parts)))
+    fc += "".join(f"[v{i}][a{i}]" for i in range(len(parts))) + f"concat=n={len(parts)}:v=1:a=1[v][a];[a]{LOUDNORM},aresample=48000[ao]"
+    run(cmd + ["-filter_complex", fc, "-map", "[v]", "-map", "[ao]"] + ENC_FINAL + [str(out)])
+
+
 CAP_Y = {"fill": 1380, "blur": 1460, "facecam": 1120, "react": 1560}
 TOP = 730  # react layout: face panel height = seam y (even)
 GAME_H = H - TOP  # 1190
@@ -232,7 +333,11 @@ def main():
     ap.add_argument("--title-style", choices=["box", "outline"], default="box")
     ap.add_argument("--title-secs", type=float, default=0, help="0 = whole clip")
     ap.add_argument("--captions", choices=["word", "bubble", "none"], default="word")
-    ap.add_argument("--hook", default="")
+    ap.add_argument("--hook", default="", help="gancio a video, 3-8 parole")
+    ap.add_argument("--intro-secs", type=float, default=2.0,
+                    help="secondi di intro: il momento clou in anteprima col gancio grande; 0 = gancio sopra l'inizio della clip")
+    ap.add_argument("--cta", default="", help="chiamata all'azione finale, es. 'Commenta: tu cosa avresti fatto?'")
+    ap.add_argument("--cta-secs", type=float, default=2.5, help="secondi della chiusura con la CTA")
     ap.add_argument("--allow-profanity", action="store_true", help="keep swear words in captions (slurs and Italian blasphemies are always masked)")
     ap.add_argument("--cam", default="auto", help="auto (find the webcam) or x:y:w:h fractions")
     ap.add_argument("--start", type=float); ap.add_argument("--end", type=float)
@@ -241,6 +346,10 @@ def main():
     pick = next(x for x in c["candidates"] if x["n"] == a.pick)
     s0 = a.start if a.start is not None else pick["start"]; e0 = a.end if a.end is not None else pick["end"]
     words = join_elisions(load_json(d / "transcript.json"))
+    lang = (c.get("lang") or "").lower()
+    if lang and lang != "en" and any(w.get("lang") for w in words):
+        # captions only for the streamer: the game speaks English and already shows its own subtitles
+        words = [w for w in words if w.get("lang", lang) == lang]
     out = d / "edits"; out.mkdir(exist_ok=True)
     layout, cam, side = a.layout, a.cam, 'right'
     face_expr = None
@@ -289,10 +398,13 @@ def main():
             title = ('box', a.title, TOP, a.title_secs)
         else:
             title = ('outline', a.title, TOP + 40, a.title_secs)
+    intro = bool(a.hook.strip()) and a.intro_secs > 0
+    cta = bool(a.cta.strip()) and a.cta_secs > 0
     ass = out / f"clip_{a.pick}.ass"
     caps = a.captions
     cap_words = words if caps != 'none' else []
-    ass.write_text(build_ass(cap_words, s0, e0, a.hook, cap_y, title=title, caps=caps, profanity=a.allow_profanity), encoding="utf-8")
+    ass.write_text(build_ass(cap_words, s0, e0, '' if intro else a.hook, cap_y, title=title, caps=caps, profanity=a.allow_profanity),
+                   encoding="utf-8")
     src = None; gx = None
     if layout == 'react':
         from common import ffprobe
@@ -301,12 +413,39 @@ def main():
         gx = game_offset(c['source'], s0, e0, src, [float(t) for t in cam.split(':')])
     v = video_filter(layout, cam, ass, band=band, cam_side=side, src=src, game_x=gx, face_expr=face_expr)
     mp4 = out / f"clip_{a.pick}.mp4"
-    run([tool("ffmpeg"), "-y", "-v", "error", "-ss", f"{s0:.2f}", "-to", f"{e0:.2f}", "-i", c["source"],
-         "-filter_complex", v, "-map", "[vo]", "-map", "0:a?", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
-         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
-         "-ar", "48000", "-movflags", "+faststart", str(mp4)])
+    audio = has_audio(c["source"])
+    intro_secs = 0.0
+    if not (intro or cta):
+        render(c["source"], s0, e0, v, mp4, af=LOUDNORM, enc=ENC_FINAL, audio=audio)
+    else:
+        parts_dir = out / f"clip_{a.pick}_parti"
+        parts_dir.mkdir(exist_ok=True)
+        parts = []
+        if intro:  # the loudest moment first, with the hook: frame 1 is already the action
+            peak = pick.get("peak")
+            if peak is None or not (s0 <= peak <= e0) or a.start is not None or a.end is not None:
+                peak = loudest(d, s0, e0)
+            if peak is None:
+                peak = (s0 + e0) / 2
+            intro_secs = min(a.intro_secs, e0 - s0)
+            i0 = min(max(s0, peak - 0.6 * intro_secs), e0 - intro_secs)
+            iass = parts_dir / "intro.ass"
+            iass.write_text(card_ass(a.hook, "intro", intro_secs, layout), encoding="utf-8")
+            vi = video_filter(layout, cam, iass, cam_side=side, src=src, game_x=gx)  # static cam crop: a tracked face is timed on the clip
+            render(c["source"], i0, i0 + intro_secs, vi, parts_dir / "intro.mp4",
+                   af=f"afade=t=in:d=0.04,afade=t=out:st={max(0.0, intro_secs - 0.12):.2f}:d=0.12", audio=audio)
+            parts.append(parts_dir / "intro.mp4")
+        clip_mp4 = parts_dir / "clip.mp4"
+        render(c["source"], s0, e0, v, clip_mp4,
+               af="afade=t=in:d=0.04" + (f",afade=t=out:st={max(0.0, e0 - s0 - 0.35):.2f}:d=0.35" if cta else ""), audio=audio)
+        parts.append(clip_mp4)
+        if cta:
+            parts.append(cta_card(clip_mp4, a.cta, a.cta_secs, parts_dir))
+        join(parts, mp4)
     info = c.get("info", {})
-    save_json(out / f"clip_{a.pick}.json", {"file": str(mp4), "start": s0, "end": e0, "layout": layout, "hook": a.hook or a.title, "title": a.title, "cam": cam,
+    save_json(out / f"clip_{a.pick}.json", {"file": str(mp4), "start": s0, "end": e0, "layout": layout, "hook": a.hook or a.title,
+                                            "title": a.title, "cam": cam, "intro_secs": intro_secs, "cta": a.cta if cta else "",
+                                            "cta_secs": a.cta_secs if cta else 0,
                                             "source_url": info.get("webpage_url"), "source_title": info.get("title"),
                                             "source_channel": info.get("channel") or info.get("uploader")})
     print(mp4)

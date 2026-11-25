@@ -2,9 +2,11 @@
 
 usage: python streams.py --query "gta 6" --limit 20 --out streams.md
 YouTube always. Twitch always (Helix if TWITCH_CLIENT_ID and TWITCH_TOKEN are set, else keyless public GQL). Kick is tried once, skipped silently on failure.
+YouTube keeps only GTA 6 being played: its live search pads the page with unrelated 24/7 lives (news, cartoons, poker),
+which used to top the list by viewers.
 Viewer counts are exactly what the platform returned at run time.
 """
-import argparse, json, os, sys, time
+import argparse, json, os, re, sys, time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import quote_plus
@@ -16,6 +18,18 @@ try:
     truststore.inject_into_ssl()
 except Exception:
     pass
+
+
+# YouTube's live search fills the page with unrelated 24/7 lives (news, cartoons, poker) when few match the query:
+# keep only GTA 6 being played now.
+GTA6 = re.compile(r"grand\s*theft\s*auto\s*(?:vi|6)\b|\bgta\s*(?:vi|6)\b", re.I)
+LOOP = re.compile(r"24\s*/\s*7|24h|countdown|conto alla rovescia|release date|data (?:di|d')\s*uscita|progress tracker", re.I)
+MAX_LIVE_HOURS = 24
+
+
+def gta6_live(row):
+    """A real GTA 6 live: GTA 6 in the title, not a 24/7 loop or a countdown, on air for less than a day."""
+    return bool(GTA6.search(row["title"])) and not LOOP.search(row["title"]) and (row["hours"] is None or row["hours"] < MAX_LIVE_HOURS)
 
 
 def fmt_dur(sec):
@@ -51,8 +65,11 @@ def youtube(query, limit):
         start = i.get("release_timestamp") or i.get("timestamp")
         out.append({"platform": "YouTube", "channel": i.get("channel") or i.get("uploader") or "",
                     "title": i.get("title") or "", "url": i.get("webpage_url") or "",
-                    "viewers": i.get("concurrent_view_count"), "live_for": fmt_dur(now - start) if start else ""})
-    return out
+                    "viewers": i.get("concurrent_view_count"), "live_for": fmt_dur(now - start) if start else "",
+                    "hours": (now - start) / 3600 if start else None})
+    keep = [r for r in out if gta6_live(r)]
+    youtube.dropped = len(out) - len(keep)
+    return keep
 
 
 def twitch_nokey(game="Grand Theft Auto VI", limit=20, lang=None):
@@ -137,6 +154,10 @@ def main():
     for name, rows in sections:
         rows = sorted(rows, key=lambda r: r["viewers"] or -1, reverse=True)
         md += [f"## {name}", ""]
+        dropped = getattr(youtube, "dropped", 0) if name == "YouTube" else 0
+        if dropped:
+            md += [f"Tolte {dropped} dirette che non sono partite di GTA 6 (altri giochi, canali 24/7, conti alla rovescia).", ""]
+            print(f"YouTube: tolte {dropped} dirette che non sono partite di GTA 6")
         if not rows:
             md += ["Nessuna live trovata.", ""]
             continue
@@ -146,6 +167,8 @@ def main():
             md.append(f"| {n} | {r['channel']} | {r['title'].replace('|', '/')} | {v} | {r['live_for']} | {r['url']} |")
             print(f"{name:8} {str(v):>7}  {r['channel'][:24]:24} {r['title'][:50]:50} {r['url']}")
         md.append("")
+        if name == "Twitch":
+            md += ["Le live finite di un canale, da dare a moments.py: https://www.twitch.tv/<canale>/videos?filter=archives", ""]
     Path(a.out).write_text("\n".join(md), encoding="utf-8")
     print(f"scritto {a.out}")
 

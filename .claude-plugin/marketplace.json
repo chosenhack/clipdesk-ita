@@ -9,8 +9,8 @@
     {
       "name": "clipdesk-ita",
       "source": "./",
-      "description": "Le live di GTA 6 diventano clip verticali in italiano, con il minimo di lavoro a mano. Approvi tu ogni post.",
-      "version": "0.2.0",
+      "description": "Le clip virali degli streamer italiani di GTA 6, trovate e montate con gancio e CTA. Approvi tu ogni post.",
+      "version": "0.3.0",
       "category": "productivity",
       "tags": ["gta6", "clipping", "video", "shorts", "reels", "italiano"]
     }

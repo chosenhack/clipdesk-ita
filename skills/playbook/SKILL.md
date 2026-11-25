@@ -10,8 +10,9 @@ description: Esegui la routine giornaliera della pagina GTA 6 dal playbook compl
 3. Trova a che punto è la pagina: il giorno di kickoff (sezione 17) o il piano giornaliero normale (sezione 9). Controlla `log.md` e `scoreboard.csv`.
 4. Esegui la giornata:
    - Prima le fonti ufficiali (sezione 5). Registra ogni fatto verificato con il suo link in `facts.md`.
-   - Trova materiale: `trend-radar`, `stream-finder`, `campaign-finder`.
-   - Taglia le clip: `moment-finder`, poi `clip-cutter`, con i ganci da `hook-writer`.
+   - Le clip della giornata: `viral-clips` trova le clip virali degli streamer italiani in live su GTA 6 e le monta con intro, clip e CTA.
+   - Altro materiale: `stream-finder` per le live e le live finite degli streamer, `trend-radar` per i video di tendenza, `campaign-finder`.
+   - Taglia le clip: `moment-finder` sulla live finita, poi `clip-cutter`, con i ganci da `hook-writer`. I video di notizie, guide e trucchi danno clip di informazioni: usali per i post «come si fa», non per le clip dei momenti.
    - Fai passare ogni clip da `rule-check`.
    - Registra e impara con `learning-loop`.
 5. Manda all'utente UN solo messaggio con la didascalia esatta, il percorso del file e il credito per ogni post. L'utente risponde «sì» per approvare. L'utente lo pubblica da sé o lo programma. Mai caricare in automatico.
