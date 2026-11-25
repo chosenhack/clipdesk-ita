@@ -7,6 +7,8 @@ description: Guarda lo streamer Twitch di GTA 6 più seguito e fai clip di reazi
 
 Volto in alto, gioco sotto, un titolo grande sulla linea di giunzione. È il formato della maggior parte delle clip virali di streamer su GTA 6.
 
+Per il giro più veloce, con le clip che gli spettatori hanno già tagliato e reso virali, usa `viral-clips`.
+
 ## 1. Trova lo streamer (non serve un account o una chiave Twitch)
 
 `python "${CLAUDE_PLUGIN_ROOT}/scripts/streams.py" --query "gta 6"` elenca le prime live di Grand Theft Auto VI su Twitch e YouTube, ordinate per spettatori. Scegli uno streamer che ha una campagna di clip (controlla `campaigns.md`), oppure uno le cui clip puoi pubblicare con il permesso.
@@ -20,13 +22,15 @@ Volto in alto, gioco sotto, un titolo grande sulla linea di giunzione. È il for
 
 ```
 python "${CLAUDE_PLUGIN_ROOT}/scripts/cut.py" jobs/<id> --pick 1 --layout react --cam auto \
-  --title "Speed HA CAPITO perché GTA 6 ci ha messo 13 ANNI" --title-style box --captions bubble
+  --title "Speed HA CAPITO perché GTA 6 ci ha messo 13 ANNI" --title-style box --captions bubble \
+  --hook "Ha capito tutto in un secondo" --cta "Commenta: tu l'avevi capito?"
 ```
 
 - `--cam auto` trova da solo la webcam dello streamer (riconoscimento del volto più il riquadro della webcam intorno). Stampa dove l'ha trovata. Se non trova un volto stabile, passa al layout sfocato e lo dice. Controlla una volta il primo fotogramma; se il ritaglio è sbagliato, passa le frazioni `--cam x:y:w:h`.
 - `--title-style box`: banda bianca con testo nero in grassetto sulla giunzione. `--title-style outline`: testo bianco con contorno nero spesso sopra la parte alta del gioco, per titoli brevi («Scontri con la polizia in GTA 6»).
 - `--captions bubble`: fumetto bianco («Oddio!»). `word`: sottotitoli parola per parola. `none`: solo il titolo.
 - Scrivi il titolo con `hook-writer` (sezione dei titoli di reazione).
+- `--hook` apre la clip con 2 secondi di anteprima del momento clou, `--cta` la chiude con la chiamata all'azione. Scrivili con `hook-writer`.
 
 ## Regole
 

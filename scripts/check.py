@@ -73,8 +73,12 @@ def main():
     add(f"duration {rules['min']:g}-{rules['max']:g}s" + ("" if have_campaign else " (default)"),
         rules["min"] <= dur <= rules["max"], f"{dur:.1f}s")
     hook = meta.get("hook", "")
-    hits = banned_in(hook + " " + a.caption)
-    add("no banned terms in caption/hook", not hits, ", ".join(hits))
+    hits = banned_in(hook + " " + meta.get("cta", "") + " " + a.caption)
+    add("no banned terms in caption/hook/cta", not hits, ", ".join(hits))
+    if meta:  # the format: intro with the hook, the clip, the call to action
+        add("intro with the hook", bool(meta.get("intro_secs")),
+            f"{meta.get('intro_secs'):g}s" if meta.get("intro_secs") else "missing: cut.py --hook (with --intro-secs above 0)")
+        add("closing call to action", bool(meta.get("cta")), meta.get("cta") or "missing: cut.py --cta")
     if rules["tags"]:
         miss = [t for t in rules["tags"] if t.lower() not in a.caption.lower()]
         add("required hashtags", not miss, ("missing " + " ".join(miss)) if miss else " ".join(rules["tags"]))

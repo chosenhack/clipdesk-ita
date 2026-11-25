@@ -34,7 +34,8 @@ Elenca la cartella che creerai e i file al suo interno, poi chiedi un solo «sì
 
 - `playbook.md` (copia da `${CLAUDE_PLUGIN_ROOT}/skills/playbook/references/playbook.md` e compila i campi tra [PARENTESI QUADRE] con le risposte)
 - `facts.md` (solo fatti verificati, ciascuno con il link a una fonte ufficiale)
-- `idea-bank.md`, `watchlist.md`, `log.md`
+- `idea-bank.md`, `log.md`
+- `watchlist.md`: i link dei canali da controllare sempre, uno per riga (`https://www.twitch.tv/<canale>`, `https://kick.com/<canale>`, `https://www.youtube.com/@canale`). `viral.py` li legge insieme agli streamer in live.
 - `scoreboard.csv` con solo questa riga di intestazione:
   `post_id,date,time,platform,pillar,format,hook,length_sec,credit,views_12h,views_24h,views_72h,likes,reposts_or_shares,replies_or_comments,saves_or_bookmarks,followers_at_read,test_name,notes`
 - `learning.md` con le sezioni Vittorie, Sconfitte, Regole attuali
@@ -45,4 +46,4 @@ Elenca la cartella che creerai e i file al suo interno, poi chiedi un solo «sì
 
 ## 4. Conclusione
 
-Dillo all'utente, in 3 righe: cosa è stato installato, dove si trova la cartella e il passo successivo (`campaign-finder`, poi `trend-radar`). Ricordagli che approva ogni post e che niente viene caricato in automatico.
+Dillo all'utente, in 3 righe: cosa è stato installato, dove si trova la cartella e il passo successivo (`campaign-finder`, poi `viral-clips` per le prime clip virali montate). Ricordagli che approva ogni post e che niente viene caricato in automatico.
